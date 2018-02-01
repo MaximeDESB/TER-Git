@@ -17,9 +17,8 @@ var simulation = d3.forceSimulation()
     .force("link", d3.forceLink().id(function(d) { return d.id; }))
     .force("charge", d3.forceManyBody())
     .force("center", d3.forceCenter(width / 2, height / 2));
-
-
-
+    
+										
 //-----------------------------------------tableau dynamique-------------------------------
 
     /*  d3.csv("data.csv", function(data) {
@@ -42,10 +41,15 @@ var simulation = d3.forceSimulation()
 
 	d3.json("data.json", function(data) {
 		
-		console.log(data);
-            var container = d3.select("body")
-
-                .append("table")
+						console.log(data);
+						
+            var div1 = d3.select("body")
+								.append("div")
+								.attr("id", "div1")
+								
+								.append("table")
+								.attr("class", "table")
+   							
                 .selectAll("tr")
                 .data(data.nodes)
                 .enter()
@@ -55,6 +59,34 @@ var simulation = d3.forceSimulation()
                	.data(function(d) { return Object.values(d); })
 								.enter()
                 .append("td")
+                
+                .style("border", "1px black solid")
+    						.style("padding", "5px")
+    						
+                .text(function(d) { return d; });
+                
+                
+                
+            var div2 = d3.select("body")
+								.append("div")
+								.attr("id", "div2")
+								
+								.append("table")
+								.attr("class", "table")
+   							
+                .selectAll("tr")
+                .data(data.links)
+                .enter()
+                .append("tr")
+
+                .selectAll("td")
+               	.data(function(d) { return Object.values(d); })
+								.enter()
+                .append("td")
+                
+                .style("border", "1px black solid")
+    						.style("padding", "5px")
+    						
                 .text(function(d) { return d; });
                 
   //-------------------------------------link------------------------------------
@@ -123,11 +155,4 @@ function dragended(d) {
   d.fy = null;
 }
 
-
- /* d3.csv('data.csv', function(data) {
-            var a = function(row) {
-                console.log(Object.keys(row));
-		};
-           
-        });*/
 

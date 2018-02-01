@@ -8,3 +8,28 @@
   stroke: #fff;
   stroke-width: 1.5px;
 }
+
+#div1 {
+	display: inline-block;
+	vertical-align: top;
+	max-width: 50%;
+	max-height:300px;
+	margin: 10px;
+	overflow: auto;
+	padding: 12px;
+}
+
+#div2 {
+	display: inline-block;
+	vertical-align: top;
+	max-width: 50%;
+	max-height:300px;
+	margin:10px;
+	overflow: auto;
+	padding: 12px;
+}
+
+.table {
+	border-collapse: collapse;
+	border: 2px black solid;
+}
