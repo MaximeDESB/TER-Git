@@ -1,4 +1,4 @@
-src,dst,rules
+source,target,rules
 0,1,R1
 2,0,R2
 1,3,C1

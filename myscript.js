@@ -13,7 +13,7 @@ var height = svg.attr("height");
 var color = d3.scaleOrdinal(d3.schemeCategory20);
 
 var simulation = d3.forceSimulation()
-    .force("link", d3.forceLink().id(function(d) { return d.id; }))
+    .force("link", d3.forceLink().id(function(d) { return d.node; }))
     .force("charge", d3.forceManyBody())
     .force("center", d3.forceCenter(width / 2, height / 2));
     
@@ -113,7 +113,7 @@ var edges;
                      .selectAll("line")
                      .data(edges)
                      .enter().append("line")
-                     .attr("stroke-width", function(d) { return Math.sqrt(d.value); });
+                     .attr("stroke-width", "1");
 	
 
 	
@@ -122,35 +122,25 @@ var edges;
 
 
 
- var node = svg.append("g")
-
-      .attr("class", "nodes")
-
-    .selectAll("circle")
-
-    .data(nodes)
-
-    .enter().append("circle")
-
-      .attr("r", 5)
-
-      .call(d3.drag()
-
-          .on("start", dragstarted)
-
-          .on("drag", dragged)
-
-          .on("end", dragended));
+        var node = svg.append("g")
+                      .attr("class", "nodes")
+                      .selectAll("circle")
+                      .data(nodes)
+                      .enter().append("circle")
+                      .attr("r", 5)
+                      .call(d3.drag()
+                      .on("start", dragstarted)
+                      .on("drag", dragged)
+                      .on("end", dragended));
 
           
 
 //--------------------------------------------------------------------------------------------
 
 
-
  node.append("title")
 
-      .text(function(d) { return d.id; });
+      .text(function(d) {return d.node; });
 
 
   simulation
@@ -159,8 +149,10 @@ var edges;
 
   simulation.force("link")
       .links(edges);
+      console.log(edges);
       
        function ticked() {
+       
     link
         .attr("x1", function(d) { return d.source.x; })
         .attr("y1", function(d) { return d.source.y; })
