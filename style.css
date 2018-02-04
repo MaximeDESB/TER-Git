@@ -33,3 +33,28 @@
 	border-collapse: collapse;
 	border: 2px black solid;
 }
+
+.cells {
+	border: 1px black solid;
+    	padding: 5px;
+}
+
+.rows:hover {
+	background-color: #D1F7FF;
+}
+
+
+th{
+	border: 1px black solid;
+    	padding: 5px;
+	padding-top: 12px;
+    	padding-bottom: 12px;
+    	text-align: left;
+    	background-color: #299DB6;
+    	color: white;
+}
+
+
+
+
+
