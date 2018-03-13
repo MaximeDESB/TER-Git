@@ -46,12 +46,14 @@ var edges;
 	             .text(function (d) { return d });
 	             
 	             
-	        var rows = tbody.selectAll('tr')
+	        var rows_nodes = tbody.selectAll('tr')
 	                        .data(nodes)
 	                        .enter()
-	                        .append('tr');
+	                        .append('tr')
+	                        .attr("id", function(d) { return "row_node" + d.node;});
+	                        
 
-	        var cells = rows.selectAll('td')
+	        var cells = rows_nodes.selectAll('td')
 	                        .data(function(row) {
 	    	                        return nodes.columns.map(function (column) {
 	    		                                            return { column: column, value: row[column] }
@@ -64,8 +66,10 @@ var edges;
             table.attr("class", "table");
             cells.attr("class", "cells");
             thead.attr("class", "thead");
-            rows.attr("class", "rows");
+            rows_nodes.attr("class", "rows");
             div1.attr("id", "div1");
+            
+          
             
        //tableau edges 
        
@@ -82,12 +86,13 @@ var edges;
 	             .text(function (d) { return d });
 	             
 	             
-	        var rows = tbody.selectAll('tr')
+	        var rows_links = tbody.selectAll('tr')
 	                        .data(edges)
 	                        .enter()
-	                        .append('tr');
+	                        .append('tr')
+	                        .attr("id" , function(d) {return "row_link" + d.source + d.target;});
 
-	        var cells = rows.selectAll('td')
+	        var cells = rows_links.selectAll('td')
 	                        .data(function(row) {
 	    	                        return edges.columns.map(function (column) {
 	    		                                            return { column: column, value: row[column] }
@@ -99,9 +104,10 @@ var edges;
                             
             table.attr("class", "table");
             cells.attr("class", "cells");
-            rows.attr("class", "rows");
+            rows_links.attr("class", "rows");
             div2.attr("id", "div2");
             thead.attr("class", "thead");
+            
             
        
         
@@ -113,8 +119,8 @@ var edges;
                      .selectAll("line")
                      .data(edges)
                      .enter().append("line")
-                     .attr("stroke-width", "1");
-	
+                     .attr("id" , function(d) {return "link" + d.source + d.target;});
+                     
 
 	
 
@@ -128,6 +134,7 @@ var edges;
                       .data(nodes)
                       .enter().append("circle")
                       .attr("r", 5)
+                      .attr("id" , function(d) {return "node"+ d.node;})
                       .call(d3.drag()
                       .on("start", dragstarted)
                       .on("drag", dragged)
@@ -135,7 +142,7 @@ var edges;
 
           
 
-//--------------------------------------------------------------------------------------------
+//------------------------------------liaison node/edges--------------------------------------------------------
 
 
  node.append("title")
@@ -149,7 +156,6 @@ var edges;
 
   simulation.force("link")
       .links(edges);
-      console.log(edges);
       
        function ticked() {
        
@@ -163,14 +169,79 @@ var edges;
         .attr("cx", function(d) { return d.x; })
         .attr("cy", function(d) { return d.y; });
   }
+  
+  //----------------------------------------------on click node----------------------------------------------
 
-	
+
+    rows_nodes.on("click", clickRowsNode);
+    node.on("click", clickNode);
+    
+        
+    function clickRowsNode(d, i) {
+    if (d3.select(this).classed("rowSelected")) {
+        d3.select(this).classed("rowSelected", false);
+        d3.select("#node" + d.node).classed( "nodeSelected", false);
+        } 
+        else 
+        {
+        d3.select(this).classed("rowSelected", true);
+        d3.select("#node" + d.node).classed( "nodeSelected", true);
+        }
+    }
+    
+    
+    function clickNode(d, i) {
+    
+    if (d3.select(this).classed("nodeSelected")) {
+        d3.select(this).classed("nodeSelected", false);
+        d3.select("#row_node" + d.node).classed("rowSelected",false);
+        } 
+        else 
+        {
+        d3.select(this).classed("nodeSelected", true);
+        d3.select("#row_node" + d.node).classed("rowSelected",true);
+        }
+    }
+    
+    //-----------------------------------------on click edges-----------------------------------
+    
+    rows_links.on("click", clickRowsLink);
+    link.on("click", clickLink);
+    
+    function clickRowsLink(d, i) {
+    if (d3.select(this).classed("rowSelected")) {
+        d3.select(this).classed("rowSelected", false);
+        d3.select("#link" + d.source.node + d.target.node).classed( "linkSelected", false);
+        } 
+        else 
+        {
+        d3.select(this).classed("rowSelected", true);
+        d3.select("#link" + d.source.node + d.target.node).classed( "linkSelected", true);
+        }
+    }
+    
+     function clickLink(d, i) {
+    
+    if (d3.select(this).classed("linkSelected")) {
+        d3.select(this).classed("linkSelected", false);
+        d3.select("#row_link" + d.source.node + d.target.node).classed("rowSelected",false);
+        } 
+        else 
+        {
+        d3.select(this).classed("linkSelected", true);
+        d3.select("#row_link" + d.source.node + d.target.node).classed("rowSelected",true);
+        }
+    }
+    
+    
+   //faire un bouton pour tout deselectionner
+    
 	});//sortie edges
 	});//sortie nodes
 			
-           
+
+
                 
-  
 
 function dragstarted(d) {
   if (!d3.event.active) simulation.alphaTarget(0.3).restart();
