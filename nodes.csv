@@ -1,0 +1,7 @@
+node,succ,pred,on,off,init,dead,transient,component,kind,size
+0,"1,2","2,5","PI,Ete,M,PP",,True,False,False,3,init+scc,3
+1,3,0,"PI,Ete,PP",M,False,False,True,0,dead+basin,3
+2,"0,4,5",0,"Ete,M,PP",PI,False,False,False,3,init+scc,3
+3,,"1,4,5",Ete,"PI,M,PP",False,True,False,0,dead+basin,3
+4,3,2,"Ete,PP","PI,M",False,False,True,0,dead+basin,3
+5,"0,3",2,"Ete,M","PI,PP",False,False,False,3,init+scc,3
