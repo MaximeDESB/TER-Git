@@ -57,26 +57,42 @@ th{
 	position:static;
 }
 
-.selected {
-  background-color: #84a9d7;
-  color: white;
-}
-text.selected {
-  font-weight: bold;
-}
 
 .rowSelected {
- background-color: red;
+ background-color: #34d7d7;
 }
 
+.rowSelectedByNode {
+ background-color: #16ec73;
+}
+
+.rowSelected:hover {
+ background-color: #19ecec;
+}
+
+
 .nodeSelected {
-  stroke: #f00a0a;
+  stroke: #34d7d7;
   stroke-width: 10px;
 }
 
 .linkSelected {
- stroke: #f00;
+ stroke: #34d7d7;
  stroke-opacity: 0.6;
  stroke-width: 2;
 }
+
+.linkSelectedByNode {
+ stroke: #16ec73;
+ stroke-opacity: 0.6;
+ stroke-width: 2;
+}
+
+.otherNode {
+ stroke-opacity: 0.5;
+ stroke: #ece0e0;
+ stroke-width: 6px;
+}
+
+
 

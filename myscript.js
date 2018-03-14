@@ -180,28 +180,48 @@ var edges;
     function clickRowsNode(d, i) {
     if (d3.select(this).classed("rowSelected")) {
         d3.select(this).classed("rowSelected", false);
+        decolorLinkWithNode(d);
         d3.select("#node" + d.node).classed( "nodeSelected", false);
         } 
         else 
         {
         d3.select(this).classed("rowSelected", true);
+        colorLinkWithNode(d);
         d3.select("#node" + d.node).classed( "nodeSelected", true);
         }
     }
-    
-    
-    function clickNode(d, i) {
+
+ function clickNode(d, i) {
     
     if (d3.select(this).classed("nodeSelected")) {
         d3.select(this).classed("nodeSelected", false);
+        decolorLinkWithNode(d);
         d3.select("#row_node" + d.node).classed("rowSelected",false);
         } 
         else 
         {
         d3.select(this).classed("nodeSelected", true);
+        colorLinkWithNode(d);
         d3.select("#row_node" + d.node).classed("rowSelected",true);
         }
     }
+
+//------------------------------------color les link quand on clic sur leurs sources-------------------
+
+   function colorLinkWithNode(d, i) {
+      var dot = d;
+      link.filter(function(d) {return d.source.node == dot.node;}).classed("linkSelectedByNode", true);
+      //color les rows
+      rows_links.filter(function(d) {return d.source.node == dot.node;}).classed("rowSelectedByNode", true);
+   }
+
+   function decolorLinkWithNode(d, i) {
+      var dot = d;
+      link.filter(function(d) {return d.source.node == dot.node;}).classed("linkSelectedByNode", false);
+      //decolore les rows
+      rows_links.filter(function(d) {return d.source.node == dot.node;}).classed("rowSelectedByNode", false);
+   }
+    
     
     //-----------------------------------------on click edges-----------------------------------
     
