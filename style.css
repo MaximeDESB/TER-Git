@@ -57,6 +57,7 @@ th{
 	position:static;
 }
 
+<<<<<<< HEAD
 
 .rowSelected {
  background-color: #34d7d7;
@@ -91,3 +92,28 @@ th{
 
 
 
+=======
+.selected {
+  background-color: #84a9d7;
+  color: white;
+}
+text.selected {
+  font-weight: bold;
+}
+
+.rowSelected {
+ background-color: red;
+}
+
+.nodeSelected {
+  stroke: #f00a0a;
+  stroke-width: 10px;
+}
+
+.linkSelected {
+ stroke: #f00;
+ stroke-opacity: 0.6;
+ stroke-width: 2;
+}
+
+>>>>>>> master
