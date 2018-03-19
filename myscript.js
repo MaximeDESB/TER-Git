@@ -1,21 +1,44 @@
 //-----------------------------------------SVG-------------------------------------------
 
+
+
+
+var width = 960;
+var height = 600;
+
+
 var svg = d3.select("body")
-					.append("svg")
-					.attr("width", 960)
-					.attr("height", 600);
-					
-var width = svg.attr("width");
-var height = svg.attr("height");
-   
+	.append("svg")
+	.attr("width", width)
+	.attr("height", height);
+
+//------------------------------------------------------zoom-----------------------------------------------------
+
+
+svg.append("rect")
+    .attr("width", width)
+    .attr("height", height)
+    .style("fill", "none")
+    .style("pointer-events", "all")
+    .call(d3.zoom()
+        .scaleExtent([1 / 2, 4])
+        .on("zoom", zoomed));
+
+function zoomed() {
+    d3.selectAll("g").attr("transform", d3.event.transform);
+}
+
+
+
 //---------------------------------------------------------------------------------------
 
-var color = d3.scaleOrdinal(d3.schemeCategory20);
 
 var simulation = d3.forceSimulation()
     .force("link", d3.forceLink().id(function(d) { return d.node; }))
     .force("charge", d3.forceManyBody())
     .force("center", d3.forceCenter(width / 2, height / 2));
+
+
     
 
 //----------------------------------------variables-------------------------------------
@@ -107,9 +130,24 @@ var edges;
             rows_links.attr("class", "rows");
             div2.attr("id", "div2");
             thead.attr("class", "thead");
-            
-            
-       
+
+
+
+//--------------------------------------------------------------arrow-----------------------------------------------------------
+
+
+           var defs = svg.append('svg:defs');
+                defs.append('svg:marker')
+                 .attr('id', 'end-arrow')
+                 .attr('viewBox', '0 -5 10 10')
+                .attr('refX', "21")
+                 .attr('markerWidth', 5)
+                 .attr('markerHeight', 5)
+                .attr('orient', 'auto')
+                .append('svg:path')
+                 .attr('d', 'M0,-5L10,0L0,5');
+
+     
         
         
         //-------------------------------------link------------------------------------
@@ -119,7 +157,8 @@ var edges;
                      .selectAll("line")
                      .data(edges)
                      .enter().append("line")
-                     .attr("id" , function(d) {return "link" + d.source + d.target;});
+                     .attr("id" , function(d) {return "link" + d.source + d.target;})
+                     .attr('marker-end','url(#end-arrow)');
                      
 
 	
@@ -279,4 +318,8 @@ function dragended(d) {
   d.fx = null;
   d.fy = null;
 }
+
+
+
+
 

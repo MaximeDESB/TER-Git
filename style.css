@@ -73,26 +73,21 @@ th{
 
 .nodeSelected {
   stroke: #34d7d7;
-  stroke-width: 10px;
+  stroke-width: 1.5px;
 }
 
 .linkSelected {
  stroke: #34d7d7;
  stroke-opacity: 0.6;
- stroke-width: 2;
+ stroke-width: 1;
 }
 
 .linkSelectedByNode {
  stroke: #16ec73;
  stroke-opacity: 0.6;
- stroke-width: 2;
+ stroke-width: 1;
 }
 
-.otherNode {
- stroke-opacity: 0.5;
- stroke: #ece0e0;
- stroke-width: 6px;
-}
 
 
 
