@@ -3,18 +3,22 @@
 
 
 
-var width = 960;
-var height = 600;
+
+var height = 400;
 
 
 var svg = d3.select("body")
+    .append("div")
+    .attr("id", "div_svg")
 	.append("svg")
-	.attr("width", width)
+	.attr("width", "100%")
 	.attr("height", height);
+	
+var width = parseInt(svg.style("width"));
 
 //------------------------------------------------------zoom-----------------------------------------------------
 
-
+/*
 svg.append("rect")
     .attr("width", width)
     .attr("height", height)
@@ -26,7 +30,7 @@ svg.append("rect")
 
 function zoomed() {
     d3.selectAll("g").attr("transform", d3.event.transform);
-}
+}*/
 
 
 
@@ -56,7 +60,7 @@ var edges;
 		
 		//tableau nodes
         
-        var div1 = d3.select("body").append("div");
+        var div1 = d3.select("#div_svg").append("div");
 	        var table = div1.append("table");
 	        var thead = table.append('thead');
 	        var tbody = table.append('tbody');
@@ -140,7 +144,7 @@ var edges;
                 defs.append('svg:marker')
                  .attr('id', 'end-arrow')
                  .attr('viewBox', '0 -5 10 10')
-                .attr('refX', "21")
+                .attr('refX', "17")
                  .attr('markerWidth', 5)
                  .attr('markerHeight', 5)
                 .attr('orient', 'auto')
@@ -166,8 +170,8 @@ var edges;
 //----------------------------------------node-----------------------------------
 
 
-
-        var node = svg.append("g")
+    
+      /*  var node = svg.append("g")
                       .attr("class", "nodes")
                       .selectAll("circle")
                       .data(nodes)
@@ -177,7 +181,32 @@ var edges;
                       .call(d3.drag()
                       .on("start", dragstarted)
                       .on("drag", dragged)
-                      .on("end", dragended));
+                      .on("end", dragended));*/
+                      
+                      
+                      
+                      var node = svg.selectAll("g.node")
+	                            .data(nodes)
+	                            .enter().append("g")
+	                            .attr("class", "nodes")
+	                            .attr("id" , function(d) {return "node"+ d.node;})
+	                            .call(d3.drag()
+	                            .on("start", dragstarted)
+	                            .on("drag", dragged)
+	                            .on("end", dragended));
+
+	                            
+	                      node.append("path")
+	                          .attr("d", d3.symbol()
+	                                    .size(100)
+                                        .type(function(d) { return d3.symbolCross;}));
+                                        
+          function choisirType(d) {
+                    switch (d.kind) {
+                        case "init": return d3.symbolStar;
+                        }
+                        }
+     
 
           
 
@@ -198,6 +227,8 @@ var edges;
       
        function ticked() {
        
+    node.attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; });
+       
     link
         .attr("x1", function(d) { return d.source.x; })
         .attr("y1", function(d) { return d.source.y; })
@@ -217,15 +248,17 @@ var edges;
     
         
     function clickRowsNode(d, i) {
-    if (d3.select(this).classed("rowSelected")) {
-        d3.select(this).classed("rowSelected", false);
-        decolorLinkWithNode(d);
+    if (d3.select(this).classed("NodeRowSelected")) {
+        d3.select(this).classed("NodeRowSelected", false);
+        decolorLinkWithNodeSource(d);
+        decolorLinkWithNodeTarget(d);
         d3.select("#node" + d.node).classed( "nodeSelected", false);
         } 
         else 
         {
-        d3.select(this).classed("rowSelected", true);
-        colorLinkWithNode(d);
+        d3.select(this).classed("NodeRowSelected", true);
+        colorLinkWithNodeSource(d);
+        colorLinkWithNodeTarget(d);
         d3.select("#node" + d.node).classed( "nodeSelected", true);
         }
     }
@@ -234,31 +267,48 @@ var edges;
     
     if (d3.select(this).classed("nodeSelected")) {
         d3.select(this).classed("nodeSelected", false);
-        decolorLinkWithNode(d);
-        d3.select("#row_node" + d.node).classed("rowSelected",false);
+        decolorLinkWithNodeSource(d);
+        decolorLinkWithNodeTarget(d);
+        d3.select("#row_node" + d.node).classed("NodeRowSelected",false);
         } 
         else 
         {
         d3.select(this).classed("nodeSelected", true);
-        colorLinkWithNode(d);
-        d3.select("#row_node" + d.node).classed("rowSelected",true);
+        colorLinkWithNodeSource(d);
+        colorLinkWithNodeTarget(d);
+        d3.select("#row_node" + d.node).classed("NodeRowSelected",true);
         }
     }
 
-//------------------------------------color les link quand on clic sur leurs sources-------------------
+//------------------------------------color les link quand on clic sur leurs sources et target-------------------
 
-   function colorLinkWithNode(d, i) {
+   function colorLinkWithNodeSource(d, i) {
       var dot = d;
-      link.filter(function(d) {return d.source.node == dot.node;}).classed("linkSelectedByNode", true);
+      link.filter(function(d) {return d.source.node == dot.node;}).classed("linkSelectedByNodeSource", true);
       //color les rows
-      rows_links.filter(function(d) {return d.source.node == dot.node;}).classed("rowSelectedByNode", true);
+      rows_links.filter(function(d) {return d.source.node == dot.node;}).classed("EdgeRowSelectedByNodeSource", true);
    }
 
-   function decolorLinkWithNode(d, i) {
+   function decolorLinkWithNodeSource(d, i) {
       var dot = d;
-      link.filter(function(d) {return d.source.node == dot.node;}).classed("linkSelectedByNode", false);
+      link.filter(function(d) {return d.source.node == dot.node;}).classed("linkSelectedByNodeSource", false);
       //decolore les rows
-      rows_links.filter(function(d) {return d.source.node == dot.node;}).classed("rowSelectedByNode", false);
+      rows_links.filter(function(d) {return d.source.node == dot.node;}).classed("EdgeRowSelectedByNodeSource", false);
+   }
+
+
+    function colorLinkWithNodeTarget(d, i) {
+      var dot = d;
+      link.filter(function(d) {return d.target.node == dot.node;}).classed("linkSelectedByNodeTarget", true);
+      //color les rows
+      rows_links.filter(function(d) {return d.target.node == dot.node;}).classed("EdgeRowSelectedByNodeTarget", true);
+   }
+
+   function decolorLinkWithNodeTarget(d, i) {
+      var dot = d;
+      link.filter(function(d) {return d.target.node == dot.node;}).classed("linkSelectedByNodeTarget", false);
+      //decolore les rows
+      rows_links.filter(function(d) {return d.target.node == dot.node;}).classed("EdgeRowSelectedByNodeTarget", false);
    }
     
     
@@ -268,13 +318,17 @@ var edges;
     link.on("click", clickLink);
     
     function clickRowsLink(d, i) {
-    if (d3.select(this).classed("rowSelected")) {
-        d3.select(this).classed("rowSelected", false);
+    if (d3.select(this).classed("EdgeRowSelected")) {
+        d3.select(this).classed("EdgeRowSelected", false);
+        decolorNodeWithEdgeSource(d);
+        decolorNodeWithEdgeTarget(d);
         d3.select("#link" + d.source.node + d.target.node).classed( "linkSelected", false);
         } 
         else 
         {
-        d3.select(this).classed("rowSelected", true);
+        d3.select(this).classed("EdgeRowSelected", true);
+        colorNodeWithEdgeSource(d);
+        colorNodeWithEdgeTarget(d);
         d3.select("#link" + d.source.node + d.target.node).classed( "linkSelected", true);
         }
     }
@@ -283,17 +337,51 @@ var edges;
     
     if (d3.select(this).classed("linkSelected")) {
         d3.select(this).classed("linkSelected", false);
-        d3.select("#row_link" + d.source.node + d.target.node).classed("rowSelected",false);
+        decolorNodeWithEdgeSource(d);
+        decolorNodeWithEdgeTarget(d);
+        d3.select("#row_link" + d.source.node + d.target.node).classed("EdgeRowSelected",false);
         } 
         else 
         {
         d3.select(this).classed("linkSelected", true);
-        d3.select("#row_link" + d.source.node + d.target.node).classed("rowSelected",true);
+        colorNodeWithEdgeSource(d);
+        colorNodeWithEdgeTarget(d);
+        d3.select("#row_link" + d.source.node + d.target.node).classed("EdgeRowSelected",true);
         }
     }
     
+  //-----------------------------------color les nodes quand on clic sur leurs edges---------------
+  
+  
+  function colorNodeWithEdgeSource(d, i) {
+      var edg = d;
+      node.filter(function(d) {return d.node == edg.source.node;}).classed("NodeSelectedByEdgeSource", true);
+      //color les rows
+      rows_nodes.filter(function(d) {return d.node == edg.source.node;}).classed("NodeRowSelectedByEdgeSource", true);
+   }
+
+   function decolorNodeWithEdgeSource(d, i) {
+      var edg = d;
+      node.filter(function(d) {console.log(d.node);return d.node == edg.source.node;}).classed("NodeSelectedByEdgeSource", false);
+      //decolore les rows
+      rows_nodes.filter(function(d) {return d.node == edg.source.node;}).classed("NodeRowSelectedByEdgeSource", false);
+   }
+   
+    function colorNodeWithEdgeTarget(d, i) {
+      var edg = d;
+      node.filter(function(d) {return d.node == edg.target.node;}).classed("NodeSelectedByEdgeTarget", true);
+      //color les rows
+      rows_nodes.filter(function(d) {return d.node == edg.target.node;}).classed("NodeRowSelectedByEdgeTarget", true);
+   }
+
+   function decolorNodeWithEdgeTarget(d, i) {
+      var edg = d;
+      node.filter(function(d) {return d.node == edg.target.node;}).classed("NodeSelectedByEdgeTarget", false);
+      //decolore les rows
+      rows_nodes.filter(function(d) {return d.node == edg.target.node;}).classed("NodeRowSelectedByEdgeTarget", false);
+   }
     
-   //faire un bouton pour tout deselectionner
+    
     
 	});//sortie edges
 	});//sortie nodes

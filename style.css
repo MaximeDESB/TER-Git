@@ -2,7 +2,7 @@
 .links {
   stroke: #999;
   stroke-opacity: 0.6;
-  stroke-width: 1;
+  stroke-width: 1.5;
 }
 
 .nodes {
@@ -10,24 +10,27 @@
   stroke-width: 1.5px;
 }
 
+#div_svg {
+	float:left;
+	max-width:80%;
+}
+
+
 #div1 {
-	display: inline-block;
 	vertical-align: top;
-	max-width: 50%;
 	max-height:300px;
-	margin: 10px;
+	max-width:100%;
+	margin-top: 10px;
 	overflow: auto;
-	padding: 12px;
 }
 
 #div2 {
-	display: inline-block;
-	vertical-align: top;
-	max-width: 50%;
-	max-height:300px;
-	margin:10px;
+	display:inline-block;
+	float:left;
+	max-height:650px;
+	max-width:20%;
+	margin-left:10px;
 	overflow: auto;
-	padding: 12px;
 }
 
 .table {
@@ -57,35 +60,77 @@ th{
 	position:static;
 }
 
+/*node*/
 
-.rowSelected {
+.NodeRowSelected {
  background-color: #34d7d7;
 }
 
-.rowSelectedByNode {
- background-color: #16ec73;
-}
-
-.rowSelected:hover {
+.NodeRowSelected:hover {
  background-color: #19ecec;
 }
 
+.NodeRowSelectedByEdgeSource {
+ background-color: #16ec73;
+}
+
+.NodeRowSelectedByEdgeTarget {
+ background-color: #ff2703;
+}
 
 .nodeSelected {
+  fill: #34d7d7;
   stroke: #34d7d7;
   stroke-width: 1.5px;
 }
 
+.NodeSelectedByEdgeSource {
+  fill: #16ec73;
+  stroke: #16ec73;
+  stroke-width: 1.5px;
+}
+
+.NodeSelectedByEdgeTarget {
+  fill: #ff2703;
+  stroke: #ff2703;
+  stroke-width: 1.5px;
+}
+
+/*edge*/
+
+.EdgeRowSelected {
+ background-color: #34d7d7;
+}
+
+.EdgeRowSelected:hover {
+ background-color: #19ecec;
+}
+
+.EdgeRowSelectedByNodeSource {
+ background-color: #16ec73;
+}
+
+.EdgeRowSelectedByNodeTarget {
+ background-color: #ff2703;
+}
+
+
 .linkSelected {
  stroke: #34d7d7;
  stroke-opacity: 0.6;
- stroke-width: 1;
+ stroke-width: 1.5;
 }
 
-.linkSelectedByNode {
+.linkSelectedByNodeSource {
  stroke: #16ec73;
  stroke-opacity: 0.6;
- stroke-width: 1;
+ stroke-width: 1.5;
+}
+
+.linkSelectedByNodeTarget {
+ stroke: #ff2703;
+ stroke-opacity: 0.6;
+ stroke-width: 1.5;
 }
 
 
