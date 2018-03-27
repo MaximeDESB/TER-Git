@@ -1,9 +1,5 @@
 //-----------------------------------------SVG-------------------------------------------
 
-
-
-
-
 var height = 400;
 
 
@@ -18,7 +14,7 @@ var width = parseInt(svg.style("width"));
 
 //------------------------------------------------------zoom-----------------------------------------------------
 
-/*
+
 svg.append("rect")
     .attr("width", width)
     .attr("height", height)
@@ -28,11 +24,12 @@ svg.append("rect")
         .scaleExtent([1 / 2, 4])
         .on("zoom", zoomed));
 
+
 function zoomed() {
-    d3.selectAll("g").attr("transform", d3.event.transform);
-}*/
-
-
+  
+d3.select(".links").attr("transform", d3.event.transform);
+d3.select(".node_list").attr("transform", d3.event.transform);
+}
 
 //---------------------------------------------------------------------------------------
 
@@ -170,22 +167,10 @@ var edges;
 //----------------------------------------node-----------------------------------
 
 
-    
-      /*  var node = svg.append("g")
-                      .attr("class", "nodes")
-                      .selectAll("circle")
-                      .data(nodes)
-                      .enter().append("circle")
-                      .attr("r", 5)
-                      .attr("id" , function(d) {return "node"+ d.node;})
-                      .call(d3.drag()
-                      .on("start", dragstarted)
-                      .on("drag", dragged)
-                      .on("end", dragended));*/
-                      
-                      
-                      
-                      var node = svg.selectAll("g.node")
+	                            
+	                  var node = svg.append("g")
+	                            .attr("class", "node_list")
+	                            .selectAll("g")
 	                            .data(nodes)
 	                            .enter().append("g")
 	                            .attr("class", "nodes")
@@ -199,13 +184,22 @@ var edges;
 	                      node.append("path")
 	                          .attr("d", d3.symbol()
 	                                    .size(100)
-                                        .type(function(d) { return d3.symbolCross;}));
+                                        .type(function(d) { return choisirType(d);}));
+
                                         
           function choisirType(d) {
                     switch (d.kind) {
                         case "init": return d3.symbolStar;
+                        case "dead": return d3.symbolSquare;
+                        case "scc" : return d3.symbolCircle;
+                        case "basin": return d3.symbolDiamond;
+                        case "init+scc": return d3.symbolTriangle;
+                        case "dead+basin": return d3.symbolWye;
+                        case "dead+init": return d3.symbolCross;
+                        default: console.log("le type de la node "+ d.node + " n'est pas reconnu (kind)");
+                            }
                         }
-                        }
+
      
 
           
@@ -234,11 +228,42 @@ var edges;
         .attr("y1", function(d) { return d.source.y; })
         .attr("x2", function(d) { return d.target.x; })
         .attr("y2", function(d) { return d.target.y; });
-
-    node
-        .attr("cx", function(d) { return d.x; })
-        .attr("cy", function(d) { return d.y; });
+        
   }
+  
+  //---------------------------------------------click---------------------------------------------------
+    
+    svg.on("click", deselectAll);
+    
+    function deselectAll() {
+        if (!d3.event.ctrlKey) {
+            d3.selectAll(".NodeRowSelected").each(function(d) {
+                                                     d3.select(this).classed("NodeRowSelected", false);
+                                                     decolorLinkWithNodeSource(d);
+                                                     decolorLinkWithNodeTarget(d);
+                                                     d3.select("#node" + d.node).classed( "nodeSelected", false);
+                                                      });
+            d3.selectAll(".nodeSelected").each(function(d) {
+                                                     d3.select(this).classed("nodeSelected", false);
+                                                     decolorLinkWithNodeSource(d);
+                                                     decolorLinkWithNodeTarget(d);
+                                                     d3.select("#row_node" + d.node).classed("NodeRowSelected",false);
+                                                     });
+            d3.selectAll(".EdgeRowSelected").each(function(d) {
+                                                     d3.select(this).classed("EdgeRowSelected", false);
+                                                     decolorNodeWithEdgeSource(d);
+                                                     decolorNodeWithEdgeTarget(d);
+                                                     d3.select("#link" + d.source.node + d.target.node).classed( "linkSelected", false);
+                                                     });    
+            d3.selectAll(".linkSelected").each(function(d) {
+                                                     d3.select(this).classed("linkSelected", false);
+                                                     decolorNodeWithEdgeSource(d);
+                                                     decolorNodeWithEdgeTarget(d);
+                                                     d3.select("#row_link" + d.source.node + d.target.node).classed("EdgeRowSelected",false);
+                                                     });
+            }
+    }
+        
   
   //----------------------------------------------on click node----------------------------------------------
 
@@ -248,36 +273,37 @@ var edges;
     
         
     function clickRowsNode(d, i) {
-    if (d3.select(this).classed("NodeRowSelected")) {
-        d3.select(this).classed("NodeRowSelected", false);
-        decolorLinkWithNodeSource(d);
-        decolorLinkWithNodeTarget(d);
-        d3.select("#node" + d.node).classed( "nodeSelected", false);
-        } 
-        else 
-        {
-        d3.select(this).classed("NodeRowSelected", true);
-        colorLinkWithNodeSource(d);
-        colorLinkWithNodeTarget(d);
-        d3.select("#node" + d.node).classed( "nodeSelected", true);
-        }
+        if (d3.select(this).classed("NodeRowSelected")) {
+            d3.select(this).classed("NodeRowSelected", false);
+            decolorLinkWithNodeSource(d);
+            decolorLinkWithNodeTarget(d);
+            d3.select("#node" + d.node).classed( "nodeSelected", false);
+            } 
+            else 
+            {
+            d3.select(this).classed("NodeRowSelected", true);
+            colorLinkWithNodeSource(d);
+            colorLinkWithNodeTarget(d);
+            d3.select("#node" + d.node).classed( "nodeSelected", true);
+            }
     }
 
  function clickNode(d, i) {
-    
-    if (d3.select(this).classed("nodeSelected")) {
-        d3.select(this).classed("nodeSelected", false);
-        decolorLinkWithNodeSource(d);
-        decolorLinkWithNodeTarget(d);
-        d3.select("#row_node" + d.node).classed("NodeRowSelected",false);
-        } 
-        else 
-        {
-        d3.select(this).classed("nodeSelected", true);
-        colorLinkWithNodeSource(d);
-        colorLinkWithNodeTarget(d);
-        d3.select("#row_node" + d.node).classed("NodeRowSelected",true);
-        }
+    if (d3.event.ctrlKey) {
+        if (d3.select(this).classed("nodeSelected")) {
+            d3.select(this).classed("nodeSelected", false);
+            decolorLinkWithNodeSource(d);
+            decolorLinkWithNodeTarget(d);
+            d3.select("#row_node" + d.node).classed("NodeRowSelected",false);
+            } 
+            else 
+            {
+            d3.select(this).classed("nodeSelected", true);
+            colorLinkWithNodeSource(d);
+            colorLinkWithNodeTarget(d);
+            d3.select("#row_node" + d.node).classed("NodeRowSelected",true);
+            }
+       }
     }
 
 //------------------------------------color les link quand on clic sur leurs sources et target-------------------
@@ -318,37 +344,38 @@ var edges;
     link.on("click", clickLink);
     
     function clickRowsLink(d, i) {
-    if (d3.select(this).classed("EdgeRowSelected")) {
-        d3.select(this).classed("EdgeRowSelected", false);
-        decolorNodeWithEdgeSource(d);
-        decolorNodeWithEdgeTarget(d);
-        d3.select("#link" + d.source.node + d.target.node).classed( "linkSelected", false);
-        } 
-        else 
-        {
-        d3.select(this).classed("EdgeRowSelected", true);
-        colorNodeWithEdgeSource(d);
-        colorNodeWithEdgeTarget(d);
-        d3.select("#link" + d.source.node + d.target.node).classed( "linkSelected", true);
-        }
+        if (d3.select(this).classed("EdgeRowSelected")) {
+            d3.select(this).classed("EdgeRowSelected", false);
+            decolorNodeWithEdgeSource(d);
+            decolorNodeWithEdgeTarget(d);
+            d3.select("#link" + d.source.node + d.target.node).classed( "linkSelected", false);
+            } 
+            else 
+            {
+            d3.select(this).classed("EdgeRowSelected", true);
+            colorNodeWithEdgeSource(d);
+            colorNodeWithEdgeTarget(d);
+            d3.select("#link" + d.source.node + d.target.node).classed( "linkSelected", true);
+            }
     }
     
      function clickLink(d, i) {
-    
-    if (d3.select(this).classed("linkSelected")) {
-        d3.select(this).classed("linkSelected", false);
-        decolorNodeWithEdgeSource(d);
-        decolorNodeWithEdgeTarget(d);
-        d3.select("#row_link" + d.source.node + d.target.node).classed("EdgeRowSelected",false);
-        } 
-        else 
-        {
-        d3.select(this).classed("linkSelected", true);
-        colorNodeWithEdgeSource(d);
-        colorNodeWithEdgeTarget(d);
-        d3.select("#row_link" + d.source.node + d.target.node).classed("EdgeRowSelected",true);
+        if (d3.event.ctrlKey) {
+            if (d3.select(this).classed("linkSelected")) {
+                d3.select(this).classed("linkSelected", false);
+                decolorNodeWithEdgeSource(d);
+                decolorNodeWithEdgeTarget(d);
+                d3.select("#row_link" + d.source.node + d.target.node).classed("EdgeRowSelected",false);
+                } 
+                else 
+                {
+                d3.select(this).classed("linkSelected", true);
+                colorNodeWithEdgeSource(d);
+                colorNodeWithEdgeTarget(d);
+                d3.select("#row_link" + d.source.node + d.target.node).classed("EdgeRowSelected",true);
+                }
+            }
         }
-    }
     
   //-----------------------------------color les nodes quand on clic sur leurs edges---------------
   
@@ -362,7 +389,7 @@ var edges;
 
    function decolorNodeWithEdgeSource(d, i) {
       var edg = d;
-      node.filter(function(d) {console.log(d.node);return d.node == edg.source.node;}).classed("NodeSelectedByEdgeSource", false);
+      node.filter(function(d) {return d.node == edg.source.node;}).classed("NodeSelectedByEdgeSource", false);
       //decolore les rows
       rows_nodes.filter(function(d) {return d.node == edg.source.node;}).classed("NodeRowSelectedByEdgeSource", false);
    }
