@@ -7,7 +7,7 @@
 
 .nodes {
   stroke: #fff;
-  stroke-width: 1.5px;
+  fill: #000;
 }
 
 #div_svg {

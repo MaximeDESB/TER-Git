@@ -62,12 +62,12 @@ var edges;
 	        var thead = table.append('thead');
 	        var tbody = table.append('tbody');
 
-	        thead.append('tr')
-	             .selectAll('th')
-	             .data(nodes.columns)
-	             .enter()
-	             .append('th')
-	             .text(function (d) { return d });
+	        var column_node = thead.append('tr')
+	                             .selectAll('th')
+	                             .data(nodes.columns)
+	                             .enter()
+	                             .append('th')
+	                             .text(function (d) { return d });
 	             
 	             
 	        var rows_nodes = tbody.selectAll('tr')
@@ -77,7 +77,7 @@ var edges;
 	                        .attr("id", function(d) { return "row_node" + d.node;});
 	                        
 
-	        var cells = rows_nodes.selectAll('td')
+	        var cells_node = rows_nodes.selectAll('td')
 	                        .data(function(row) {
 	    	                        return nodes.columns.map(function (column) {
 	    		                                            return { column: column, value: row[column] }
@@ -88,7 +88,7 @@ var edges;
                             .text(function (d) { return d.value });
                             
             table.attr("class", "table");
-            cells.attr("class", "cells");
+            cells_node.attr("class", "cells");
             thead.attr("class", "thead");
             rows_nodes.attr("class", "rows");
             div1.attr("id", "div1");
@@ -116,7 +116,7 @@ var edges;
 	                        .append('tr')
 	                        .attr("id" , function(d) {return "row_link" + d.source + d.target;});
 
-	        var cells = rows_links.selectAll('td')
+	        var cells_edge = rows_links.selectAll('td')
 	                        .data(function(row) {
 	    	                        return edges.columns.map(function (column) {
 	    		                                            return { column: column, value: row[column] }
@@ -127,7 +127,7 @@ var edges;
                             .text(function (d) { return d.value });
                             
             table.attr("class", "table");
-            cells.attr("class", "cells");
+            cells_edge.attr("class", "cells");
             rows_links.attr("class", "rows");
             div2.attr("id", "div2");
             thead.attr("class", "thead");
@@ -151,7 +151,7 @@ var edges;
      
         
         
-        //-------------------------------------link------------------------------------
+ //---------------------------------------------------------link----------------------------------------------------
                 
        var link = svg.append("g")
                      .attr("class", "links")
@@ -164,7 +164,7 @@ var edges;
 
 	
 
-//----------------------------------------node-----------------------------------
+//--------------------------------------------------------------node-----------------------------------
 
 
 	                            
@@ -231,6 +231,50 @@ var edges;
         
   }
   
+  //---------------------------------------------select column-------------------------------------------------------
+  
+   column_node.on("click", selection_column);
+   
+   function selection_column(d, i) {
+        var select_column = d;
+        //selectionne les cellules de la colonne
+        var cells_selected = d3.select("#div1")
+                               .selectAll("td")
+                               .filter(function(d) { return d.column == select_column; });
+        //on compte le nombre de variable differente
+           var nb_variable = d3.nest()
+                               .key(function(d) { return d.value; })
+                               .entries(cells_selected.data())
+                               .length;  
+                                                                           
+        //use scaleLinear pour preparer les couleurs
+        var color = d3.scaleLinear()
+                      .domain([0,nb_variable])
+                      .range([d3.rgb("#F00"), d3.rgb("#001EFF")]);
+                      
+        //on color les cellules et nodes
+        var i = 0, valeur_actuelle = 0;
+        while (i < nb_variable) {
+            //parcour les valeurs possible de la colonne
+            valeur_actuelle = d3.nest()
+                                .key(function(d) { return d.value; })
+                                .entries(cells_selected.data())[i]
+                                .key;
+            //colore les cellules
+            cells_selected.filter(function(d) { return d.value == valeur_actuelle;})
+                          .style("background-color", color(i))
+                          .classed("cells_selected", true);
+            //colore les nodes correspondantes
+            node.filter(function(d) {return d[select_column] == valeur_actuelle;})
+                .style("fill", color(i))
+                .classed("node_in_color", true);
+            i++;
+            }
+         
+                                  
+        }
+        
+  
   //---------------------------------------------click---------------------------------------------------
     
     svg.on("click", deselectAll);
@@ -260,6 +304,14 @@ var edges;
                                                      decolorNodeWithEdgeSource(d);
                                                      decolorNodeWithEdgeTarget(d);
                                                      d3.select("#row_link" + d.source.node + d.target.node).classed("EdgeRowSelected",false);
+                                                     });
+            d3.selectAll(".node_in_color").each(function(d) {
+                                                     d3.select(this).classed("node_in_color", false);
+                                                     d3.select(this).style("fill", null);
+                                                     });
+            d3.selectAll(".cells_selected").each(function(d) {
+                                                     d3.select(this).classed("cells_selected", false);
+                                                     d3.select(this).style("background-color", "white");
                                                      });
             }
     }
